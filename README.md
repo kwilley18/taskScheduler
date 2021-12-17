@@ -1,7 +1,8 @@
 # taskScheduler
 
 ## Description 
-This is an application that lists tasks for a user.  
+This is an application that lists tasks for a user. Json-server is utilized to create a "mock" server where a user and 
+add and delete a task from a server. 
 
  ## Table of Contents
 * [Installation](#installation) 
