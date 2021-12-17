@@ -1,43 +1,44 @@
-import logo from './logo.svg';
 import './App.css';
 import Header from './components/Header'
 import Tasks from './components/Tasks'
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
+import AddTask from './components/AddTask'
 
 function App() {
 
-  const [tasks, setTasks] = useState([
-    {
-        id: '1',
-        name: 'Appointment', 
-        day: 'Feb 2, 2021',
-        reminder: true, 
-    },
-    {
-        id: '2',
-        name: 'Appointment2', 
-        day: 'Feb 11, 2021',
-        reminder: true, 
-    },
-    {
-        id: '3',
-        name: 'Appointment3', 
-        day: 'March 11, 2021',
-        reminder: true, 
-  }
-])
+  const [showAddTask, setShowAddTask] = useState(false); 
+  const [tasks, setTasks] = useState([])
 
+  useEffect(() => {
+    const fetchTasks = async () => {
+      const resp = await fetch( "http://localhost:5000/tasks")
+      const data = await resp.json()
+
+      console.log(data); 
+
+    }
+    fetchTasks()
+
+  }, [])
+
+  const addTask = (task) => {
+  const id = Math.floor(Math.random() * 10000) + 1
+  const newTask = { id, ...task}
+  setTasks([...tasks, newTask])
+ //console.log(task); 
+}
 const deleteTask = (id) => {
-  setTasks(tasks.filter( (task) => task.id !== id))
+  setTasks(tasks.filter((task) => task.id !== id))
 }
 
-const taskReminder = (id) => {
-  
+const toggleReminder = (id) => {
+  setTasks( tasks.map((task) => task.id === id  ? {...task, reminder: !task.reminder} : task ))
 }
   return (
     <div className="App">
-      <Header title="Time Tracker" /> 
-      <Tasks tasks = {tasks} onDelete={deleteTask}/> 
+      <Header title="Time Tracker"  onAdd={()=> setShowAddTask(!showAddTask)} showAdd={showAddTask}/> 
+      {showAddTask && <AddTask  onAdd={addTask}/>}
+      {tasks.length > 0 ?  <Tasks tasks = {tasks} onDelete={deleteTask} onToggle={toggleReminder}/> : 'No tasks'}
     </div>
   );
 }
